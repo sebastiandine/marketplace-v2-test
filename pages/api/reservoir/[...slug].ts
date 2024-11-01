@@ -2,7 +2,6 @@ import { setParams } from '@reservoir0x/reservoir-sdk'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 const RESERVOIR_API_KEY = process.env.NEXT_PUBLIC_RESERVOIR_API_KEY
-const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 
 // A proxy API endpoint to redirect all requests to `/api/reservoir/*` to
 // MAINNET: https://api.reservoir.tools/{endpoint}/{query-string}
@@ -12,23 +11,43 @@ const RESERVOIR_API_BASE = process.env.NEXT_PUBLIC_RESERVOIR_API_BASE
 
 // https://nextjs.org/docs/api-routes/dynamic-api-routes#catch-all-api-routes
 const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
+
   const { query, body, method, headers: reqHeaders } = req
   const { slug } = query
 
   // Isolate the query object
   delete query.slug
 
-  let endpoint: string = ''
+  // get baseUrl for reservoire api for requested network
+  let apiBaseUrl: string;
+  switch(slug[0]){
+    case 'ethereum': 
+      apiBaseUrl = "https://api.reservoir.tools/";
+      break;
+    case 'polygon':
+      apiBaseUrl = "https://api-polygon.reservoir.tools";
+      break;
+    case 'base':
+      apiBaseUrl = "https://api-base.reservoir.tools/";
+      break;
+    default:
+      apiBaseUrl =  "https://api.reservoir.tools/";
+      break;
+  }
+  console.log("base url", apiBaseUrl);
 
+  let endpoint: string = ''
   // convert the slug array into a path string: [a, b] -> 'a/b'
   if (typeof slug === 'string') {
     endpoint = slug
   } else {
-    endpoint = (slug || ['']).join('/')
+    endpoint = (slug.slice(1) || ['']).join('/')
   }
 
   // Construct the API url: `https://api.reservoir.tools/{endpoint}/{query-string}`
-  const url = new URL(endpoint, RESERVOIR_API_BASE)
+  //const url = new URL(endpoint, RESERVOIR_API_BASE)
+  const url = new URL(endpoint, apiBaseUrl);
+  
   setParams(url, query)
 
   if (endpoint.includes('redirect/')) {
