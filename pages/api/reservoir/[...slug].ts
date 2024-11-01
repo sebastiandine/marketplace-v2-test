@@ -19,35 +19,36 @@ const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
   delete query.slug
 
   // get baseUrl for reservoire api for requested network
-  let apiBaseUrl: string;
-  switch(slug[0]){
-    case 'ethereum': 
-      apiBaseUrl = "https://api.reservoir.tools/";
-      break;
-    case 'polygon':
-      apiBaseUrl = "https://api-polygon.reservoir.tools";
-      break;
-    case 'base':
-      apiBaseUrl = "https://api-base.reservoir.tools/";
-      break;
-    default:
-      apiBaseUrl =  "https://api.reservoir.tools/";
-      break;
+  let apiBaseUrl: string = "https://api.reservoir.tools/";
+  if(slug) {
+    switch(slug[0]){
+      case 'ethereum': 
+        apiBaseUrl = "https://api.reservoir.tools/";
+        break;
+      case 'polygon':
+        apiBaseUrl = "https://api-polygon.reservoir.tools";
+        break;
+      case 'base':
+        apiBaseUrl = "https://api-base.reservoir.tools/";
+        break;
+      default:
+        apiBaseUrl =  "https://api.reservoir.tools/";
+        break;
+    }
   }
-  console.log("base url", apiBaseUrl);
 
   let endpoint: string = ''
   // convert the slug array into a path string: [a, b] -> 'a/b'
   if (typeof slug === 'string') {
     endpoint = slug
   } else {
-    endpoint = (slug.slice(1) || ['']).join('/')
+    endpoint = (slug?.slice(1) || ['']).join('/')
   }
 
   // Construct the API url: `https://api.reservoir.tools/{endpoint}/{query-string}`
   //const url = new URL(endpoint, RESERVOIR_API_BASE)
   const url = new URL(endpoint, apiBaseUrl);
-  
+
   setParams(url, query)
 
   if (endpoint.includes('redirect/')) {
