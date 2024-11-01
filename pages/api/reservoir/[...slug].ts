@@ -25,8 +25,8 @@ const proxy = async (req: NextApiRequest, res: NextApiResponse) => {
       case 'ethereum': 
         apiBaseUrl = "https://api.reservoir.tools/";
         break;
-      case 'polygon':
-        apiBaseUrl = "https://api-polygon.reservoir.tools";
+      case 'bsc':
+        apiBaseUrl = "https://api-bsc.reservoir.tools/";
         break;
       case 'base':
         apiBaseUrl = "https://api-base.reservoir.tools/";

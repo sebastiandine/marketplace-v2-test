@@ -59,7 +59,7 @@ const DISABLE_PROXY =
 const ALCHEMY_API_KEY = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY
 
 const wagmiConfig = getDefaultConfig({
-  appName: 'Reservoir NFT Explorer',
+  appName: 'Reservoir NFT Explorer TEST',
   projectId: WALLET_CONNECT_PROJECT_ID,
   chains: (supportedChains.length === 0 ? [mainnet] : supportedChains) as [
     Chain,
